@@ -38,7 +38,7 @@ class Home extends Component {
 
   render() {
     return(
-      <ScrollView>
+      <ScrollView  style={{marginBottom: 20}}>
         <RenderItem
           item={this.state.campsites.filter(campsite => campsite.featured)[0]} />
         <RenderItem 
