@@ -1,3 +1,4 @@
+//dependencies
 import React, { Component } from 'react';
 import { Text, View, ScrollView } from 'react-native';
 import { Card } from 'react-native-elements';
@@ -5,6 +6,9 @@ import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+
+//components
+import Loading from './LoadingComponent';
 
 const mapStateToProps = state => {
   return {
@@ -30,19 +34,41 @@ class About extends Component {
 
 
   render() {
-    
+
     const renderPartner = ({ item }) => {
       return (
         <ListItem
           title={item.name}
           subtitle={item.description}
-          leftAvatar={{ source: {uri: baseUrl + item.image}}}
+          leftAvatar={{ source: { uri: baseUrl + item.image } }}
         />
       );
     }
 
+    if (this.props.partners.isLoading) {
+      return (
+        <ScrollView style={{ marginBottom: 20 }}>
+          <Mission />
+          <Card
+            title='Community Partners'>
+            <Loading />
+          </Card>
+        </ScrollView>
+      );
+    }
+    if (this.props.partners.errMess) {
+      return (
+        <ScrollView style={{ marginBottom: 20 }}>
+          <Mission />
+          <Card
+            title='Community Partners'>
+            <Text>{this.props.partners.errMess}</Text>
+          </Card>
+        </ScrollView>
+      );
+    }
     return (
-      <ScrollView style={{marginBottom: 20}}>
+      <ScrollView style={{ marginBottom: 20 }}>
         <Mission />
         <Card
           title='Community Partners'

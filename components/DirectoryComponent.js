@@ -1,8 +1,12 @@
+//dependencies
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+
+//components
+import Loading from './LoadingComponent';
 
 const mapStateToProps = state => {
   return {
@@ -23,13 +27,23 @@ class Directory extends Component {
         <Tile 
           title={item.name}
           caption={item.description}
-          feature
+          featured
           onPress={() => navigate('CampsiteInfo', {campsiteId: item.id})}
           imageSrc={{uri: baseUrl + item.image}}
         />
       );
-    };
+    }
 
+    if (this.props.campsites.isLoading) {
+      return <Loading />;
+    }
+    if (this.props.campsites.errMess) {
+      return(
+        <View>
+          <Text>{this.props.campsites.errMess}</Text>
+        </View>
+      );
+    }
     return(
       <FlatList
         data={this.props.campsites.campsites}
