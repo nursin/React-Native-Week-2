@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
-import { Card, Icon } from 'react-native-elements';
+import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { postFavorite } from '../redux/ActionCreators';
@@ -62,7 +62,16 @@ function RenderComments({ comments }) {
     return (
       <View style={{ margin: 10 }}>
         <Text style={{ fontSize: 14 }}>{item.text}</Text>
-        <Text style={{ fontSize: 12 }}>{item.rating}</Text>
+        <Rating 
+        style={{ 
+          fontSize: 12,
+          alignItems: 'flex-start',
+          paddingVertical: '5%'
+         }}
+        startingValue={item.rating}
+        imageSize={15}
+        readonly={true}
+        ></Rating>
         <Text style={{ fontSize: 12 }}>{`-- ${item.author}, ${item.date}`}</Text>
       </View>
     )
@@ -84,12 +93,28 @@ class CampsiteInfo extends Component {
     super(props);
 
     this.state = {
+      rating: 5,
+      author: '',
+      text: '',
       showModal: false
     };
   }
 
   toggleModal() {
     this.setState({ showModal: !this.state.showModal });
+  }
+
+  handleComment(campsiteId) {
+    console.log(JSON.stringify(this.state));
+    this.toggleModal();
+  }
+
+  resetForm() {
+    this.setState({
+      rating: 5,
+      author: '',
+      text: ''
+    })
   }
 
   markFavorite(campsiteId) {
@@ -120,10 +145,44 @@ class CampsiteInfo extends Component {
           onRequestClose={() => this.toggleModal()}
         >
           <View style={styles.modal}>
+            <Rating
+              style={{ paddingVertical: 10 }}
+              showRating={true}
+              startingValue={this.state.rating}
+              imageSize={40}
+              onFinishRating={rating => this.setState({ rating: rating })}
+            >
+            </Rating>
+            <Input
+              placeholder='Author'
+              leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+              leftIconContainerStyle={{paddingRight: 10}}
+              onChangeText={value => this.setState({ author: value })}
+            >
+            </Input>
+            <Input
+              placeholder='Comment'
+              leftIcon={{ type: 'font-awesome', name: 'comment-o' }}
+              leftIconContainerStyle={{paddingRight: 10}}
+              onChangeText={value => this.setState({ text: value })}
+            >
+
+            </Input>
+            <View style={{ margin: 10 }}>
+              <Button
+                onPress={() => {
+                  this.handleComment(campsiteId);
+                  this.resetForm();
+                }}
+                color='#5637DD'
+                title='Submit'
+              />
+            </View>
             <View style={{ margin: 10 }}>
               <Button
                 onPress={() => {
                   this.toggleModal();
+                  this.resetForm();
                 }}
                 color='#808080'
                 title='Cancel'
